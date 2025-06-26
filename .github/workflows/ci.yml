@@ -44,12 +44,13 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Prepare databases and run tests
+      - name: Prepare databases
         run: |
           bin/rails db:create
           bin/rails db:migrate
-          bin/rails test
-
+      - name: Run specs
+        run: bundle exec rspec
+        
       - name: Upload screenshots if tests fail
         if: failure()
         uses: actions/upload-artifact@v4
