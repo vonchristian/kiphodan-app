@@ -23,11 +23,19 @@ default: &default
 development:
   accounting:
     <<: *default
-    database: kiphodan_accounting_development
+    database: accounting_development
     migrations_paths: db/accounting_migrate
   accounting_replica:
     <<: *default
-    database: kiphodan_accounting_development_replica
+    database: accounting_development_replica
+    replica: true
+  financial_institutions:
+    <<: *default
+    database: financial_institutions_development
+    migrations_paths: db/financial_institutions_migrate
+  financial_institutions_replica:
+    <<: *default
+    database: financial_institutions_development_replica
     replica: true
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -62,13 +70,20 @@ development:
 test:
   accounting:
     <<: *default
-    database: kiphodan_accounting_test
+    database: accounting_test
     migrations_paths: db/accounting_migrate
   accounting_replica:
     <<: *default
-    database: kiphodan_accounting_test_replica
+    database: accounting_test_replica
     replica: true
-
+  financial_institutions:
+    <<: *default
+    database: financial_institutions_test
+    migrations_paths: db/financial_institutions_migrate
+  financial_institutions_replica:
+    <<: *default
+    database: financial_institutions_test_replica
+    replica: true
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
 # ever seen by anyone, they now have access to your database.
