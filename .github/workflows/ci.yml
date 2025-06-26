@@ -1,43 +1,52 @@
-test:
-  runs-on: ubuntu-latest
+name: CI
 
-  services:
-    postgres:
-      image: postgres
-      env:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_DB: test_db
-      ports:
-        - 5432:5432
-      options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
-  steps:
-    - name: Install packages
-      run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config google-chrome-stable
+jobs:
+  test:
+    runs-on: ubuntu-latest
 
-    - name: Checkout code
-      uses: actions/checkout@v4
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
 
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: .ruby-version
-        bundler-cache: true
+    steps:
+      - name: Install packages
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config google-chrome-stable
 
-    - name: Set up database and run tests
-      env:
-        RAILS_ENV: test
-        DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
-      run: |
-        bin/rails db:create
-        bin/rails db:schema:load
-        bin/rails test
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Keep screenshots from failed system tests
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: screenshots
-        path: ${{ github.workspace }}/tmp/screenshots
-        if-no-files-found: ignore
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Set up database and run tests
+        env:
+          RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+        run: |
+          bin/rails db:create
+          bin/rails db:schema:load
+          bin/rails test
+
+      - name: Keep screenshots from failed system tests
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: screenshots
+          path: ${{ github.workspace }}/tmp/screenshots
+          if-no-files-found: ignore
