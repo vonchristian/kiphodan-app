@@ -12,18 +12,28 @@ jobs:
 
     services:
       postgres:
-        image: postgres
+        image: postgres:14
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
         ports:
           - 5432:5432
-        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      RAILS_ENV: test
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGHOST: localhost
+      PGPORT: 5432
 
     steps:
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config google-chrome-stable
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential libpq-dev
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -34,19 +44,16 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Set up database and run tests
-        env:
-          RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+      - name: Prepare databases and run tests
         run: |
           bin/rails db:create
-          bin/rails db:schema:load
+          bin/rails db:migrate
           bin/rails test
 
-      - name: Keep screenshots from failed system tests
-        uses: actions/upload-artifact@v4
+      - name: Upload screenshots if tests fail
         if: failure()
+        uses: actions/upload-artifact@v4
         with:
           name: screenshots
-          path: ${{ github.workspace }}/tmp/screenshots
+          path: tmp/screenshots
           if-no-files-found: ignore
