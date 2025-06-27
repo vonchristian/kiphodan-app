@@ -168,6 +168,15 @@ GEM
     method_source (1.1.0)
     mini_mime (1.1.5)
     minitest (5.25.5)
+    monetize (1.13.0)
+      money (~> 6.12)
+    money (6.19.0)
+      i18n (>= 0.6.4, <= 2)
+    money-rails (1.15.0)
+      activesupport (>= 3.0)
+      monetize (~> 1.9)
+      money (~> 6.13)
+      railties (>= 3.0)
     msgpack (1.8.0)
     net-imap (0.5.9)
       date
@@ -415,6 +424,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   kamal
+  money-rails (~> 1.12)
   pg (~> 1.1)
   propshaft
   pry-rails
