@@ -5,20 +5,19 @@ class AddAccountTypeToLedgers < ActiveRecord::Migration[8.0]
 
   def up
     create_enum_type
-    add_column :ledgers, :account_type, ENUM_TYPE_NAME.to_sym, null: false
+    add_column :ledgers, :account_type, ENUM_TYPE_NAME, null: false
     add_index :ledgers, :account_type
-
+    drop_trigger_function_if_exists
     create_trigger_function
     create_trigger
   end
 
   def down
-    remove_index :ledgers, :account_type
-    remove_column :ledgers, :account_type
-
     drop_trigger
     drop_trigger_function
-    # Leave ENUM type in place for reuse
+    remove_index :ledgers, :account_type
+    remove_column :ledgers, :account_type
+    # ENUM type left intact for reuse
   end
 
   private
@@ -39,11 +38,17 @@ class AddAccountTypeToLedgers < ActiveRecord::Migration[8.0]
     SQL
   end
 
+  def drop_trigger_function_if_exists
+    execute <<~SQL
+      DROP FUNCTION IF EXISTS #{TRIGGER_FUNCTION_NAME}();
+    SQL
+  end
+
   def create_trigger_function
     execute <<~SQL
       CREATE FUNCTION #{TRIGGER_FUNCTION_NAME}() RETURNS trigger AS $$
       BEGIN
-        IF OLD.account_type IS NOT NULL AND NEW.account_type IS DISTINCT FROM OLD.account_type THEN
+        IF NEW.account_type IS DISTINCT FROM OLD.account_type THEN
           RAISE EXCEPTION 'Cannot change account_type once set';
         END IF;
         RETURN NEW;

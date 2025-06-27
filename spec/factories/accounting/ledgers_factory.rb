@@ -4,5 +4,6 @@ FactoryBot.define do
     code { Faker::Alphanumeric.alphanumeric(number: 6).upcase }
     contra { false }
     account_type { "asset" }
+    financial_institution_id { SecureRandom.uuid }
   end
 end

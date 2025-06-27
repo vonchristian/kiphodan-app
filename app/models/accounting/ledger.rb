@@ -2,6 +2,7 @@ class Accounting::Ledger < AccountingRecord
   include Enums::AccountTypeEnum
   attribute :financial_institution_id, :uuid
 
+  validates :financial_institution_id, presence: true
   validates :name, presence: true, length: { maximum: 255 }
   validates :code, presence: true, length: { maximum: 10 }
   validate :financial_institution_id_immutable, :account_type_immutable

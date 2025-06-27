@@ -4,6 +4,7 @@ RSpec.describe Accounting::Ledger, type: :model do
   describe 'validations' do
     subject { build(:ledger) }
 
+    it { is_expected.to validate_presence_of(:financial_institution_id) }
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:code) }
     it { is_expected.to validate_length_of(:name).is_at_most(255) }
@@ -19,12 +20,6 @@ RSpec.describe Accounting::Ledger, type: :model do
         code: "CASH",
         financial_institution_id: original_id
       )
-      expect(ledger).to be_valid
-    end
-
-    it "allows setting financial_institution_id if it was nil before" do
-      ledger = create(:ledger, financial_institution_id: nil)
-      ledger.financial_institution_id = new_id
       expect(ledger).to be_valid
     end
 
@@ -58,9 +53,8 @@ RSpec.describe Accounting::Ledger, type: :model do
   describe "immutability of account_type" do
    it "prevents changing account_type once set" do
   ledger = create(:ledger, account_type: "asset", financial_institution_id: SecureRandom.uuid)
-
   ledger.account_type = "liability"
-  expect(ledger).not_to be_valid
+  ledger.save
   expect(ledger.errors[:account_type]).to include("cannot be changed once set")
 end
 
