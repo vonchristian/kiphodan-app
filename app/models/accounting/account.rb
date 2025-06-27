@@ -1,4 +1,4 @@
-class Accounting::Account < ApplicationRecord
+class Accounting::Account < AccountingRecord
   self.table_name = "accounting_accounts"
 
   include Enums::AccountTypeEnum

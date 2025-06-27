@@ -1,4 +1,5 @@
 class AddAccountTypeToAccountingAccounts < ActiveRecord::Migration[8.0]
+  ENUM_TYPE_NAME = 'accounting_account_type'
   TRIGGER_FUNCTION_NAME = 'prevent_account_account_type_change'
   TRIGGER_NAME = 'prevent_account_account_type_change_trigger'
 

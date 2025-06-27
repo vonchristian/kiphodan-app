@@ -10,16 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_26_115204) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_27_064429) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
 
-  create_table "financial_institutions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "full_name"
-    t.string "abbreviated_name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["abbreviated_name"], name: "index_financial_institutions_on_abbreviated_name", unique: true
-  end
 end

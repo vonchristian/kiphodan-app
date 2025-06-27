@@ -8,7 +8,16 @@ default: &default
   port: <%= ENV.fetch("PGPORT", 5432) %>
 
 development:
-  accounting:
+  primary:
+    <<: *default
+    database: app_primary_development
+
+  primary_replica:
+    <<: *default
+    database: app_primary_development_replica
+    replica: true
+
+  accounting_primary:
     <<: *default
     database: accounting_development
     migrations_paths: db/accounting_migrate
@@ -18,7 +27,7 @@ development:
     database: accounting_development_replica
     replica: true
 
-  financial_institutions:
+  financial_institutions_primary:
     <<: *default
     database: financial_institutions_development
     migrations_paths: db/financial_institutions_migrate
@@ -28,8 +37,27 @@ development:
     database: financial_institutions_development_replica
     replica: true
 
+  auths_primary:
+    <<: *default
+    database: auths_development
+    migrations_paths: db/auths_migrate
+
+  auths_replica:
+    <<: *default
+    database: auths_development_replica
+    replica: true
+
 test:
-  accounting:
+  primary:
+    <<: *default
+    database: app_primary_test
+
+  primary_replica:
+    <<: *default
+    database: app_primary_test_replica
+    replica: true
+
+  accounting_primary:
     <<: *default
     database: accounting_test
     migrations_paths: db/accounting_migrate
@@ -39,7 +67,7 @@ test:
     database: accounting_test_replica
     replica: true
 
-  financial_institutions:
+  financial_institutions_primary:
     <<: *default
     database: financial_institutions_test
     migrations_paths: db/financial_institutions_migrate
@@ -49,24 +77,69 @@ test:
     database: financial_institutions_test_replica
     replica: true
 
+  auths_primary:
+    <<: *default
+    database: auths_test
+    migrations_paths: db/auths_migrate
+
+  auths_replica:
+    <<: *default
+    database: auths_test_replica
+    replica: true
+
 production:
-  primary: &primary_production
+  primary:
     <<: *default
     database: kiphodan_production
     username: kiphodan
     password: <%= ENV["KIPHODAN_DATABASE_PASSWORD"] %>
 
+  primary_replica:
+    <<: *default
+    database: kiphodan_production_replica
+    replica: true
+
+  accounting:
+    <<: *default
+    database: kiphodan_production_accounting
+    migrations_paths: db/accounting_migrate
+
+  accounting_replica:
+    <<: *default
+    database: kiphodan_production_accounting_replica
+    replica: true
+
+  financial_institutions:
+    <<: *default
+    database: kiphodan_production_financial_institutions
+    migrations_paths: db/financial_institutions_migrate
+
+  financial_institutions_replica:
+    <<: *default
+    database: kiphodan_production_financial_institutions_replica
+    replica: true
+
+  auths:
+    <<: *default
+    database: kiphodan_production_auths
+    migrations_paths: db/auths_migrate
+
+  auths_replica:
+    <<: *default
+    database: kiphodan_production_auths_replica
+    replica: true
+
   cache:
-    <<: *primary_production
+    <<: *default
     database: kiphodan_production_cache
     migrations_paths: db/cache_migrate
 
   queue:
-    <<: *primary_production
+    <<: *default
     database: kiphodan_production_queue
     migrations_paths: db/queue_migrate
 
   cable:
-    <<: *primary_production
+    <<: *default
     database: kiphodan_production_cable
     migrations_paths: db/cable_migrate
