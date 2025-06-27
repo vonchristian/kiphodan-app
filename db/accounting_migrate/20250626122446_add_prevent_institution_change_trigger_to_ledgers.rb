@@ -12,7 +12,7 @@ class AddPreventInstitutionChangeTriggerToLedgers < ActiveRecord::Migration[8.0]
       $$ LANGUAGE plpgsql;
 
       CREATE TRIGGER prevent_financial_institution_id_change_trigger
-      BEFORE UPDATE ON ledgers
+      BEFORE UPDATE ON accounting_ledgers
       FOR EACH ROW
       EXECUTE FUNCTION prevent_financial_institution_id_change_to_ledgers();
     SQL
@@ -20,7 +20,7 @@ class AddPreventInstitutionChangeTriggerToLedgers < ActiveRecord::Migration[8.0]
 
   def down
     execute <<-SQL
-      DROP TRIGGER IF EXISTS prevent_financial_institution_id_change_trigger ON ledgers;
+      DROP TRIGGER IF EXISTS prevent_financial_institution_id_change_trigger ON accounting_ledgers;
       DROP FUNCTION IF EXISTS prevent_financial_institution_id_change_to_ledgers();
     SQL
   end

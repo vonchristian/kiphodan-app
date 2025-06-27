@@ -5,9 +5,9 @@ class AddAccountTypeToLedgers < ActiveRecord::Migration[8.0]
 
   def up
     create_enum_type
-    add_column :ledgers, :account_type, ENUM_TYPE_NAME, null: false
-    add_index :ledgers, :account_type
-    drop_trigger_function_if_exists
+    add_column :accounting_ledgers, :account_type, ENUM_TYPE_NAME, null: false
+    add_index :accounting_ledgers, :account_type
+
     create_trigger_function
     create_trigger
   end
@@ -15,8 +15,8 @@ class AddAccountTypeToLedgers < ActiveRecord::Migration[8.0]
   def down
     drop_trigger
     drop_trigger_function
-    remove_index :ledgers, :account_type
-    remove_column :ledgers, :account_type
+    remove_index :accounting_ledgers, :account_type
+    remove_column :accounting_ledgers, :account_type
     # ENUM type left intact for reuse
   end
 
@@ -38,11 +38,6 @@ class AddAccountTypeToLedgers < ActiveRecord::Migration[8.0]
     SQL
   end
 
-  def drop_trigger_function_if_exists
-    execute <<~SQL
-      DROP FUNCTION IF EXISTS #{TRIGGER_FUNCTION_NAME}();
-    SQL
-  end
 
   def create_trigger_function
     execute <<~SQL
@@ -60,7 +55,7 @@ class AddAccountTypeToLedgers < ActiveRecord::Migration[8.0]
   def create_trigger
     execute <<~SQL
       CREATE TRIGGER #{TRIGGER_NAME}
-      BEFORE UPDATE ON ledgers
+      BEFORE UPDATE ON accounting_ledgers
       FOR EACH ROW
       EXECUTE FUNCTION #{TRIGGER_FUNCTION_NAME}();
     SQL
@@ -68,7 +63,7 @@ class AddAccountTypeToLedgers < ActiveRecord::Migration[8.0]
 
   def drop_trigger
     execute <<~SQL
-      DROP TRIGGER IF EXISTS #{TRIGGER_NAME} ON ledgers;
+      DROP TRIGGER IF EXISTS #{TRIGGER_NAME} ON accounting_ledgers;
     SQL
   end
 

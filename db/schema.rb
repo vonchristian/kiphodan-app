@@ -10,15 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_26_123440) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_27_054228) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pgcrypto"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "accounting_account_type", ["asset", "equity", "liability", "revenue", "expense"]
 
-  create_table "ledgers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "accounting_accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "code", null: false
+    t.boolean "contra", default: false, null: false
+    t.uuid "financial_institution_id"
+    t.uuid "ledger_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.enum "account_type", null: false, enum_type: "accounting_account_type"
+    t.index ["account_type"], name: "index_accounting_accounts_on_account_type"
+    t.index ["financial_institution_id", "code"], name: "index_accounting_accounts_on_financial_institution_id_and_code", unique: true
+    t.index ["financial_institution_id", "name"], name: "index_accounting_accounts_on_financial_institution_id_and_name", unique: true
+    t.index ["financial_institution_id"], name: "index_accounting_accounts_on_financial_institution_id"
+    t.index ["ledger_id"], name: "index_accounting_accounts_on_ledger_id"
+  end
+
+  create_table "accounting_ledgers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
     t.string "code", null: false
     t.boolean "contra", default: false, null: false
@@ -26,9 +43,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_123440) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.enum "account_type", null: false, enum_type: "accounting_account_type"
-    t.index ["account_type"], name: "index_ledgers_on_account_type"
-    t.index ["financial_institution_id", "code"], name: "index_ledgers_on_financial_institution_id_and_code", unique: true
-    t.index ["financial_institution_id", "name"], name: "index_ledgers_on_financial_institution_id_and_name", unique: true
-    t.index ["financial_institution_id"], name: "index_ledgers_on_financial_institution_id"
+    t.index ["account_type"], name: "index_accounting_ledgers_on_account_type"
+    t.index ["financial_institution_id", "code"], name: "index_accounting_ledgers_on_financial_institution_id_and_code", unique: true
+    t.index ["financial_institution_id", "name"], name: "index_accounting_ledgers_on_financial_institution_id_and_name", unique: true
+    t.index ["financial_institution_id"], name: "index_accounting_ledgers_on_financial_institution_id"
   end
+
+  add_foreign_key "accounting_accounts", "accounting_ledgers", column: "ledger_id"
 end
