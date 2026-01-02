@@ -170,7 +170,9 @@ GEM
     matrix (0.4.3)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    minitest (5.25.5)
+    mini_portile2 (2.8.9)
+    minitest (6.0.1)
+      prism (~> 1.5)
     monetize (1.13.0)
       money (~> 6.12)
     money (6.19.0)
@@ -196,6 +198,9 @@ GEM
       net-protocol
     net-ssh (7.3.0)
     nio4r (2.7.4)
+    nokogiri (1.18.8)
+      mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
     nokogiri (1.18.8-aarch64-linux-gnu)
       racc (~> 1.4)
     nokogiri (1.18.8-aarch64-linux-musl)
@@ -219,7 +224,7 @@ GEM
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
-    prism (1.4.0)
+    prism (1.7.0)
     propshaft (1.1.0)
       actionpack (>= 7.0.0)
       activesupport (>= 7.0.0)
@@ -388,7 +393,7 @@ GEM
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
-    unicode-emoji (4.0.4)
+    unicode-emoji (4.2.0)
     uri (1.0.3)
     useragent (0.16.11)
     web-console (4.2.1)
@@ -412,6 +417,7 @@ PLATFORMS
   arm-linux-gnu
   arm-linux-musl
   arm64-darwin-24
+  arm64-darwin-25
   x86_64-linux
   x86_64-linux-gnu
   x86_64-linux-musl
